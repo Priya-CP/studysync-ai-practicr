@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { mockTasks } from './mockData';
 
-// We map mockTasks to ensure they all have a "completed" status starting as false
 const initialTasks = mockTasks.map(task => ({ ...task, completed: false }));
 
 function App() {
@@ -24,25 +23,29 @@ function App() {
     const taskToAdd = {
       ...newTask,
       id: Date.now().toString(),
-      completed: false // New tasks start as not completed
+      completed: false
     };
     setTasks([...tasks, taskToAdd]);
     setNewTask({ title: '', subject: '', deadline: '', estimatedMinutes: '', priority: 'low' });
   };
 
-  // NEW: Function to delete a task
   const handleDelete = (idToRemove) => {
     const updatedTasks = tasks.filter(task => task.id !== idToRemove);
     setTasks(updatedTasks);
   };
 
-  // NEW: Function to mark a task as done or undone
   const handleToggleComplete = (idToToggle) => {
     const updatedTasks = tasks.map(task => 
       task.id === idToToggle ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
   };
+
+  // NEW: Calculate progress statistics
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const remainingTasks = totalTasks - completedTasks;
+  const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
@@ -65,6 +68,24 @@ function App() {
         </form>
       </div>
 
+      {/* NEW: THE PROGRESS TRACKER */}
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#eef', borderRadius: '5px', color: '#333' }}>
+        <h3 style={{ marginTop: 0 }}>Your Progress</h3>
+        <p style={{ margin: '5px 0' }}>
+          <strong>Total:</strong> {totalTasks} | <strong>Completed:</strong> {completedTasks} | <strong>Remaining:</strong> {remainingTasks}
+        </p>
+        <div style={{ width: '100%', backgroundColor: '#ccc', borderRadius: '5px', height: '20px', marginTop: '10px' }}>
+          <div style={{ 
+            width: `${completionPercentage}%`, 
+            backgroundColor: '#4caf50', 
+            height: '100%', 
+            borderRadius: '5px',
+            transition: 'width 0.3s ease-in-out'
+          }}></div>
+        </div>
+        <p style={{ margin: '5px 0', textAlign: 'right', fontSize: '12px' }}>{completionPercentage}% Complete</p>
+      </div>
+
       {/* THE TASK LIST */}
       {tasks.length === 0 ? (
         <p>No tasks available. You are all caught up!</p>
@@ -76,13 +97,12 @@ function App() {
               border: '1px solid #ccc', 
               padding: '15px', 
               borderRadius: '5px',
-              backgroundColor: task.completed ? '#e0ffe0' : 'transparent', // Turns green if done
-              textDecoration: task.completed ? 'line-through' : 'none' // Crosses out text if done
+              backgroundColor: task.completed ? '#e0ffe0' : 'transparent',
+              textDecoration: task.completed ? 'line-through' : 'none'
             }}>
               <strong>{task.title}</strong> ({task.subject})<br />
               <span style={{ color: '#555' }}>Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}</span>
               
-              {/* THE ACTION BUTTONS */}
               <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                 <button onClick={() => handleToggleComplete(task.id)} style={{ cursor: 'pointer' }}>
                   {task.completed ? 'Undo' : 'Mark as Done'}
