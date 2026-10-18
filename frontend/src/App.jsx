@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { mockTasks } from './mockData';
 
+// We map mockTasks to ensure they all have a "completed" status starting as false
+const initialTasks = mockTasks.map(task => ({ ...task, completed: false }));
+
 function App() {
-  // 1. Tell React to remember our list of tasks
-  const [tasks, setTasks] = useState(mockTasks);
+  const [tasks, setTasks] = useState(initialTasks);
   
-  // 2. Tell React to remember what the user types in the form
   const [newTask, setNewTask] = useState({
     title: '',
     subject: '',
@@ -14,30 +15,42 @@ function App() {
     priority: 'low'
   });
 
-  // 3. Update the form memory when the user types
   const handleInputChange = (e) => {
     setNewTask({ ...newTask, [e.target.name]: e.target.value });
   };
 
-  // 4. Add the task to the list when the button is clicked
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents the page from refreshing
+    e.preventDefault();
     const taskToAdd = {
       ...newTask,
-      id: Date.now().toString(), // Creates a unique ID
+      id: Date.now().toString(),
+      completed: false // New tasks start as not completed
     };
-    
-    setTasks([...tasks, taskToAdd]); // Adds the new task to our existing list
-    setNewTask({ title: '', subject: '', deadline: '', estimatedMinutes: '', priority: 'low' }); // Clears the form
+    setTasks([...tasks, taskToAdd]);
+    setNewTask({ title: '', subject: '', deadline: '', estimatedMinutes: '', priority: 'low' });
+  };
+
+  // NEW: Function to delete a task
+  const handleDelete = (idToRemove) => {
+    const updatedTasks = tasks.filter(task => task.id !== idToRemove);
+    setTasks(updatedTasks);
+  };
+
+  // NEW: Function to mark a task as done or undone
+  const handleToggleComplete = (idToToggle) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === idToToggle ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
       <h1>StudySync Task Dashboard</h1>
       
       {/* THE ADD TASK FORM */}
-      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #666', borderRadius: '5px' }}>
-        <h3>Add New Task</h3>
+      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #666', borderRadius: '5px', backgroundColor: '#f9f9f9', color: '#333' }}>
+        <h3 style={{ marginTop: 0 }}>Add New Task</h3>
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <input type="text" name="title" placeholder="Task Title" value={newTask.title} onChange={handleInputChange} required />
           <input type="text" name="subject" placeholder="Subject" value={newTask.subject} onChange={handleInputChange} required />
@@ -48,7 +61,7 @@ function App() {
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-          <button type="submit">Add Task</button>
+          <button type="submit" style={{ cursor: 'pointer' }}>Add Task</button>
         </form>
       </div>
 
@@ -58,9 +71,26 @@ function App() {
       ) : (
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {tasks.map((task) => (
-            <li key={task.id} style={{ marginBottom: '15px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+            <li key={task.id} style={{ 
+              marginBottom: '15px', 
+              border: '1px solid #ccc', 
+              padding: '15px', 
+              borderRadius: '5px',
+              backgroundColor: task.completed ? '#e0ffe0' : 'transparent', // Turns green if done
+              textDecoration: task.completed ? 'line-through' : 'none' // Crosses out text if done
+            }}>
               <strong>{task.title}</strong> ({task.subject})<br />
-              Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}
+              <span style={{ color: '#555' }}>Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}</span>
+              
+              {/* THE ACTION BUTTONS */}
+              <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                <button onClick={() => handleToggleComplete(task.id)} style={{ cursor: 'pointer' }}>
+                  {task.completed ? 'Undo' : 'Mark as Done'}
+                </button>
+                <button onClick={() => handleDelete(task.id)} style={{ cursor: 'pointer', backgroundColor: '#ffcccc', border: '1px solid red' }}>
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
