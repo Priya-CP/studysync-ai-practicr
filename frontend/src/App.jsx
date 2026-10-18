@@ -1,122 +1,72 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { mockTasks } from './mockData';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // 1. Tell React to remember our list of tasks
+  const [tasks, setTasks] = useState(mockTasks);
+  
+  // 2. Tell React to remember what the user types in the form
+  const [newTask, setNewTask] = useState({
+    title: '',
+    subject: '',
+    deadline: '',
+    estimatedMinutes: '',
+    priority: 'low'
+  });
+
+  // 3. Update the form memory when the user types
+  const handleInputChange = (e) => {
+    setNewTask({ ...newTask, [e.target.name]: e.target.value });
+  };
+
+  // 4. Add the task to the list when the button is clicked
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevents the page from refreshing
+    const taskToAdd = {
+      ...newTask,
+      id: Date.now().toString(), // Creates a unique ID
+    };
+    
+    setTasks([...tasks, taskToAdd]); // Adds the new task to our existing list
+    setNewTask({ title: '', subject: '', deadline: '', estimatedMinutes: '', priority: 'low' }); // Clears the form
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>StudySync Task Dashboard</h1>
+      
+      {/* THE ADD TASK FORM */}
+      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #666', borderRadius: '5px' }}>
+        <h3>Add New Task</h3>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <input type="text" name="title" placeholder="Task Title" value={newTask.title} onChange={handleInputChange} required />
+          <input type="text" name="subject" placeholder="Subject" value={newTask.subject} onChange={handleInputChange} required />
+          <input type="date" name="deadline" value={newTask.deadline} onChange={handleInputChange} required />
+          <input type="number" name="estimatedMinutes" placeholder="Minutes" value={newTask.estimatedMinutes} onChange={handleInputChange} required />
+          <select name="priority" value={newTask.priority} onChange={handleInputChange}>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button type="submit">Add Task</button>
+        </form>
+      </div>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
+      {/* THE TASK LIST */}
+      {tasks.length === 0 ? (
+        <p>No tasks available. You are all caught up!</p>
+      ) : (
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
+          {tasks.map((task) => (
+            <li key={task.id} style={{ marginBottom: '15px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+              <strong>{task.title}</strong> ({task.subject})<br />
+              Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}
             </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
