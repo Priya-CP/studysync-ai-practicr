@@ -33,22 +33,11 @@ function App() {
     setTasks(tasks.map(task => task.id === idToToggle ? { ...task, completed: !task.completed } : task));
   };
 
-  // NEW: Fake API call for the Study Plan
   const handleGeneratePlan = () => {
-    // In the future, this will be a real fetch() call to POST /api/study-plan
-    // For now, we use the exact mock response from your API Contract
     const mockResponse = {
       plan: [
-        {
-          task: "Java OOP assignment",
-          durationMinutes: 90,
-          reason: "High-priority task"
-        },
-        {
-          task: "DMS revision",
-          durationMinutes: 60,
-          reason: "Prepare for the upcoming test"
-        }
+        { task: "Java OOP assignment", durationMinutes: 90, reason: "High-priority task" },
+        { task: "DMS revision", durationMinutes: 60, reason: "Prepare for the upcoming test" }
       ],
       totalMinutes: 150
     };
@@ -61,82 +50,83 @@ function App() {
   const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>StudySync Task Dashboard</h1>
+    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto', color: '#ffffff' }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>StudySync Task Dashboard</h1>
       
-      {/* ADD TASK FORM */}
-      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #666', borderRadius: '5px', backgroundColor: '#f9f9f9', color: '#333' }}>
-        <h3 style={{ marginTop: 0 }}>Add New Task</h3>
+      {/* UPDATED: ADD TASK FORM */}
+      <div style={{ marginBottom: '20px', padding: '20px', border: '1px solid #444', borderRadius: '8px', backgroundColor: '#1a1a1a' }}>
+        <h3 style={{ marginTop: 0, borderBottom: '1px solid #333', paddingBottom: '10px' }}>Add New Task</h3>
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <input type="text" name="title" placeholder="Task Title" value={newTask.title} onChange={handleInputChange} required />
-          <input type="text" name="subject" placeholder="Subject" value={newTask.subject} onChange={handleInputChange} required />
-          <input type="date" name="deadline" value={newTask.deadline} onChange={handleInputChange} required />
-          <input type="number" name="estimatedMinutes" placeholder="Minutes" value={newTask.estimatedMinutes} onChange={handleInputChange} required />
-          <select name="priority" value={newTask.priority} onChange={handleInputChange}>
+          <input type="text" name="title" placeholder="Task Title" value={newTask.title} onChange={handleInputChange} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }} />
+          <input type="text" name="subject" placeholder="Subject" value={newTask.subject} onChange={handleInputChange} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }} />
+          <input type="date" name="deadline" value={newTask.deadline} onChange={handleInputChange} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }} />
+          <input type="number" name="estimatedMinutes" placeholder="Minutes" value={newTask.estimatedMinutes} onChange={handleInputChange} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }} />
+          <select name="priority" value={newTask.priority} onChange={handleInputChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-          <button type="submit" style={{ cursor: 'pointer' }}>Add Task</button>
+          <button type="submit" style={{ cursor: 'pointer', padding: '8px 15px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold' }}>Add Task</button>
         </form>
       </div>
 
-      {/* PROGRESS TRACKER */}
-      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#eef', borderRadius: '5px', color: '#333' }}>
-        <h3 style={{ marginTop: 0 }}>Your Progress</h3>
-        <p style={{ margin: '5px 0' }}>
+      {/* UPDATED: PROGRESS TRACKER */}
+      <div style={{ marginBottom: '20px', padding: '20px', border: '1px solid #444', borderRadius: '8px', backgroundColor: '#1a1a1a' }}>
+        <h3 style={{ marginTop: 0, borderBottom: '1px solid #333', paddingBottom: '10px' }}>Your Progress</h3>
+        <p style={{ margin: '10px 0' }}>
           <strong>Total:</strong> {totalTasks} | <strong>Completed:</strong> {completedTasks} | <strong>Remaining:</strong> {remainingTasks}
         </p>
-        <div style={{ width: '100%', backgroundColor: '#ccc', borderRadius: '5px', height: '20px', marginTop: '10px' }}>
+        <div style={{ width: '100%', backgroundColor: '#333', borderRadius: '5px', height: '20px', marginTop: '10px' }}>
           <div style={{ width: `${completionPercentage}%`, backgroundColor: '#4caf50', height: '100%', borderRadius: '5px', transition: 'width 0.3s ease-in-out' }}></div>
         </div>
       </div>
 
       {/* TASK LIST */}
       {tasks.length === 0 ? (
-        <p>No tasks available. You are all caught up!</p>
+        <p style={{ textAlign: 'center', color: '#888' }}>No tasks available. You are all caught up!</p>
       ) : (
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {tasks.map((task) => (
             <li key={task.id} style={{ 
-              marginBottom: '15px', border: '1px solid #ccc', padding: '15px', borderRadius: '5px',
-              backgroundColor: task.completed ? '#e0ffe0' : 'transparent', textDecoration: task.completed ? 'line-through' : 'none'
+              marginBottom: '15px', border: '1px solid #444', padding: '15px', borderRadius: '8px',
+              backgroundColor: task.completed ? 'rgba(76, 175, 80, 0.1)' : 'transparent', 
+              textDecoration: task.completed ? 'line-through' : 'none',
+              opacity: task.completed ? 0.6 : 1
             }}>
-              <strong>{task.title}</strong> ({task.subject})<br />
-              <span style={{ color: '#555' }}>Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}</span>
+              <strong style={{ fontSize: '18px' }}>{task.title}</strong> <span style={{ color: '#aaa' }}>({task.subject})</span><br />
+              <div style={{ color: '#ccc', margin: '8px 0' }}>Deadline: {task.deadline} | Time: {task.estimatedMinutes} mins | Priority: {task.priority}</div>
               <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                <button onClick={() => handleToggleComplete(task.id)} style={{ cursor: 'pointer' }}>{task.completed ? 'Undo' : 'Mark as Done'}</button>
-                <button onClick={() => handleDelete(task.id)} style={{ cursor: 'pointer', backgroundColor: '#ffcccc', border: '1px solid red' }}>Delete</button>
+                <button onClick={() => handleToggleComplete(task.id)} style={{ cursor: 'pointer', padding: '5px 10px', backgroundColor: task.completed ? '#555' : '#4caf50', color: 'white', border: 'none', borderRadius: '4px' }}>
+                  {task.completed ? 'Undo' : 'Mark as Done'}
+                </button>
+                <button onClick={() => handleDelete(task.id)} style={{ cursor: 'pointer', padding: '5px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}>
+                  Delete
+                </button>
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      {/* NEW: STUDY PLAN GENERATOR */}
-      <div style={{ marginTop: '30px', padding: '20px', border: '2px dashed #007bff', borderRadius: '5px' }}>
-        <h2 style={{ marginTop: 0, color: '#007bff' }}>AI Study Planner</h2>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '15px' }}>
+      {/* UPDATED: STUDY PLAN GENERATOR */}
+      <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #007bff', borderRadius: '8px', backgroundColor: 'rgba(0, 123, 255, 0.05)' }}>
+        <h2 style={{ marginTop: 0, color: '#66b0ff', borderBottom: '1px solid rgba(0, 123, 255, 0.2)', paddingBottom: '10px' }}>AI Study Planner</h2>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '20px' }}>
           <label>Available Study Time (minutes):</label>
-          <input 
-            type="number" 
-            value={availableMinutes} 
-            onChange={(e) => setAvailableMinutes(e.target.value)} 
-            style={{ width: '80px', padding: '5px' }}
-          />
-          <button onClick={handleGeneratePlan} style={{ padding: '8px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}>
+          <input type="number" value={availableMinutes} onChange={(e) => setAvailableMinutes(e.target.value)} style={{ width: '80px', padding: '8px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }} />
+          <button onClick={handleGeneratePlan} style={{ padding: '8px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
             Generate Plan
           </button>
         </div>
 
         {studyPlan && (
-          <div style={{ backgroundColor: '#f0f8ff', padding: '15px', borderRadius: '5px' }}>
-            <h3>Recommended Schedule (Total: {studyPlan.totalMinutes} mins)</h3>
-            <ol style={{ paddingLeft: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
+            <h3 style={{ marginTop: 0, color: '#fff' }}>Recommended Schedule (Total: {studyPlan.totalMinutes} mins)</h3>
+            <ol style={{ paddingLeft: '20px', color: '#ddd' }}>
               {studyPlan.plan.map((item, index) => (
-                <li key={index} style={{ marginBottom: '10px' }}>
-                  <strong>{item.task}</strong> - {item.durationMinutes} mins<br/>
-                  <em style={{ color: '#666', fontSize: '14px' }}>Reason: {item.reason}</em>
+                <li key={index} style={{ marginBottom: '15px' }}>
+                  <strong style={{ color: '#fff', fontSize: '16px' }}>{item.task}</strong> - {item.durationMinutes} mins<br/>
+                  <em style={{ color: '#aaa', fontSize: '14px' }}>Reason: {item.reason}</em>
                 </li>
               ))}
             </ol>
